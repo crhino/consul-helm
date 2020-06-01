@@ -1,8 +1,71 @@
 ## Unreleased
 
+BREAKING CHANGES:
+
+* Mesh Gateway: `meshGateway.enableHealthChecks` is no longer supported. This config
+  option was to work around an issue where mesh gateways would not listen on their
+  bind ports until a Connect service was registered. This issue was fixed in Consul 1.6.2. ([GH-464](https://github.com/hashicorp/consul-helm/pull/464))
+
+DEPRECATIONS
+
+* Setting resources via YAML string is now deprecated. Instead, set directly as YAML.
+  This affects `client.resources`, `server.resources` and `meshGateway.resources`.
+  To set directly as YAML, simply remove the pipe (`|`) character that defines
+  the YAML as a string: 
+  
+  Before:
+  ```yaml
+  client:
+    resources: |
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+  ```
+  
+  After:
+  ```yaml
+  client:
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+  ```
+
+## 0.21.0 (May 14, 2020)
+
+FEATURES
+
+* Add experimental support for multi-datacenter federation via
+
+    ```yaml
+    global:
+      federation:
+        enabled: true
+    ```
+  
+  This requires Consul 1.8.0+ (which as of this release is only available as
+  a beta. To use the beta, set `global.image: consul:1.8.0-beta1`)
+
+* Add new Helm value `global.federation.createFederationSecret` that will
+  create a Kubernetes secret in primary datacenters that can be exported to secondary
+  datacenters to help bootstrap secondary clusters for federation ([GH-447](https://github.com/hashicorp/consul-helm/pull/447)).
+
 IMPROVEMENTS
 
+* Default Consul Docker image is now `consul:1.7.3`.
+* Default consul-k8s Docker image is now `hashicorp/consul-k8s:0.15.0`.
 * ACLs: Restrict permissions for the `server-acl-init` job [[GH-454](https://github.com/hashicorp/consul-helm/pull/454)].
+
+BUG FIXES
+
+* Fix missing `NODE_NAME` environment variable when setting `meshGateway.wanAddress.source=NodeName`
+  [[GH-453](https://github.com/hashicorp/consul-helm/pull/453)].
 
 ## 0.20.1 (Apr 27, 2020)
 

@@ -30,7 +30,7 @@ global:
   #   image: "consul:1.5.0"
   #   # Consul Enterprise 1.5.0
   #   image: "hashicorp/consul-enterprise:1.5.0-ent"
-  image: "consul:1.7.2"
+  image: "consul:1.7.3"
 
   # array of objects containing image pull secret names that will be applied to
   # each service account.
@@ -53,7 +53,7 @@ global:
   # If using acls.manageSystemACLs then must be >= 0.10.1.
   # If using connect inject then must be >= 0.10.1.
   # If using Consul Enterprise namespaces, must be >= 0.12.
-  imageK8S: "hashicorp/consul-k8s:0.14.0"
+  imageK8S: "hashicorp/consul-k8s:0.15.0"
 
   imageEnvoy: "envoyproxy/envoy:v1.13.0"
 
@@ -254,9 +254,10 @@ server:
   connect: true
 
   # Resource requests, limits, etc. for the server cluster placement. This
-  # should map directly to the value of the resources field for a PodSpec,
-  # formatted as a multi-line string. By default no direct resource request
-  # is made.
+  # should map directly to the value of the resources field for a PodSpec.
+  # By default no direct resource request is made.
+  # NOTE: The use of a YAML string is deprecated. Instead, set directly as a
+  #       YAML map.
   resources: null
 
   # updatePartition is used to control a careful rolling update of Consul
@@ -413,9 +414,10 @@ client:
   exposeGossipPorts: false
 
   # Resource requests, limits, etc. for the client cluster placement. This
-  # should map directly to the value of the resources field for a PodSpec,
-  # formatted as a multi-line string. By default no direct resource request
-  # is made.
+  # should map directly to the value of the resources field for a PodSpec.
+  # By default no direct resource request is made.
+  # NOTE: The use of a YAML string is deprecated. Instead, set directly as a
+  #       YAML map.
   resources: null
 
   # extraConfig is a raw string of extra configuration to set with the
@@ -863,7 +865,7 @@ meshGateway:
   # If mesh gateways are enabled, a Deployment will be created that runs
   # gateways and Consul Connect will be configured to use gateways.
   # See https://www.consul.io/docs/connect/mesh_gateway.html
-  # Requirements: consul >= 1.6.0 and consul-k8s >= 0.9.0 if using
+  # Requirements: consul 1.6.0+ and consul-k8s 0.15.0+ if using
   # global.acls.manageSystemACLs.
   enabled: false
 
@@ -924,8 +926,8 @@ meshGateway:
     # The targetPort will be set to meshGateway.containerPort.
     port: 443
 
-    # Optionally hardcode the nodePort of the service if using type: NodePort.
-    # If not set and using type: NodePort, Kubernetes will automatically assign
+    # Optionally hardcode the nodePort of the service if using a NodePort service.
+    # If not set and using a NodePort service, Kubernetes will automatically assign
     # a port.
     nodePort: null
 
@@ -965,12 +967,10 @@ meshGateway:
   # agent.
   hostPort: null
 
-  # If there are no connect-enabled services running, then the gateway
-  # will fail health checks. You may disable health checks as a temporary
-  # workaround.
-  enableHealthChecks: true
-
-  resources: |
+  # Resource settings for mesh gateway pods.
+  # NOTE: The use of a YAML string is deprecated. Instead, set directly as a
+  #       YAML map.
+  resources:
     requests:
       memory: "128Mi"
       cpu: "250m"
