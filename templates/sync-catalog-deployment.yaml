@@ -176,13 +176,15 @@ spec:
             periodSeconds: 5
             successThreshold: 1
             timeoutSeconds: 5
+          {{- with .Values.syncCatalog.resources }}
           resources:
             requests:
-              memory: "50Mi"
-              cpu: "50m"
+              memory: {{ .requests.memory | quote }}
+              cpu: {{ .requests.cpu | quote }}
             limits:
-              memory: "50Mi"
-              cpu: "50m"
+              memory: {{ .limits.memory | quote }}
+              cpu: {{ .limits.cpu | quote }}
+          {{- end }}
       {{- if or (or .Values.global.acls.manageSystemACLs .Values.global.bootstrapACLs) (and .Values.global.tls.enabled .Values.global.tls.enableAutoEncrypt) }}
       initContainers:
       {{- if (or .Values.global.acls.manageSystemACLs .Values.global.bootstrapACLs) }}

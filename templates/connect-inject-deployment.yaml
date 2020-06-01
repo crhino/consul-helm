@@ -161,13 +161,15 @@ spec:
               readOnly: true
             {{- end }}
           {{- end }}
+          {{- with .Values.connectInject.resources }}
           resources:
             requests:
-              memory: "50Mi"
-              cpu: "50m"
+              memory: {{ .requests.memory | quote }}
+              cpu: {{ .requests.cpu | quote }}
             limits:
-              memory: "50Mi"
-              cpu: "50m"
+              memory: {{ .limits.memory | quote }}
+              cpu: {{ .limits.cpu | quote }}
+          {{- end }}
       {{- if (or .Values.connectInject.certs.secretName .Values.global.tls.enabled) }}
       volumes:
         {{- if .Values.connectInject.certs.secretName }}

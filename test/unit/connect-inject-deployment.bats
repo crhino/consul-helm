@@ -849,3 +849,30 @@ load _helpers
       yq '[.spec.template.spec.containers[0].env[].name] | any(contains("HOST_IP"))' | tee /dev/stderr)
   [ "${actual}" = "true" ]
 }
+
+#--------------------------------------------------------------------
+# resources
+
+@test "connectInject/Deployment: default resources" {
+  cd `chart_dir`
+  local actual=$(helm template \
+      -x templates/connect-inject-deployment.yaml  \
+      --set 'connectInject.enabled=true' \
+      . | tee /dev/stderr |
+      yq -rc '.spec.template.spec.containers[0].resources' | tee /dev/stderr)
+  [ "${actual}" = '{"requests":{"memory":"50Mi","cpu":"50m"},"limits":{"memory":"50Mi","cpu":"50m"}}' ]
+}
+
+@test "connectInject/Deployment: can set resources" {
+  cd `chart_dir`
+  local actual=$(helm template \
+      -x templates/connect-inject-deployment.yaml  \
+      --set 'connectInject.enabled=true' \
+      --set 'connectInject.resources.requests.memory=100Mi' \
+      --set 'connectInject.resources.requests.cpu=100m' \
+      --set 'connectInject.resources.limits.memory=200Mi' \
+      --set 'connectInject.resources.limits.cpu=200m' \
+      . | tee /dev/stderr |
+      yq -rc '.spec.template.spec.containers[0].resources' | tee /dev/stderr)
+  [ "${actual}" = '{"requests":{"memory":"100Mi","cpu":"100m"},"limits":{"memory":"200Mi","cpu":"200m"}}' ]
+}

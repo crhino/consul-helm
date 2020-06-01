@@ -335,3 +335,30 @@ load _helpers
       yq '.spec.template.spec.volumes[] | select(.name == "consul-ca-cert")' | tee /dev/stderr)
   [ "${actual}" = "" ]
 }
+
+#--------------------------------------------------------------------
+# resources
+
+@test "client/SnapshotAgentDeployment: default resources" {
+  cd `chart_dir`
+  local actual=$(helm template \
+      -x templates/client-snapshot-agent-deployment.yaml  \
+      --set 'client.snapshotAgent.enabled=true' \
+      . | tee /dev/stderr |
+      yq -rc '.spec.template.spec.containers[0].resources' | tee /dev/stderr)
+  [ "${actual}" = '{"requests":{"memory":"50Mi","cpu":"50m"},"limits":{"memory":"50Mi","cpu":"50m"}}' ]
+}
+
+@test "client/SnapshotAgentDeployment: can set resources" {
+  cd `chart_dir`
+  local actual=$(helm template \
+      -x templates/client-snapshot-agent-deployment.yaml  \
+      --set 'client.snapshotAgent.enabled=true' \
+      --set 'client.snapshotAgent.resources.requests.memory=100Mi' \
+      --set 'client.snapshotAgent.resources.requests.cpu=100m' \
+      --set 'client.snapshotAgent.resources.limits.memory=200Mi' \
+      --set 'client.snapshotAgent.resources.limits.cpu=200m' \
+      . | tee /dev/stderr |
+      yq -rc '.spec.template.spec.containers[0].resources' | tee /dev/stderr)
+  [ "${actual}" = '{"requests":{"memory":"100Mi","cpu":"100m"},"limits":{"memory":"200Mi","cpu":"200m"}}' ]
+}
