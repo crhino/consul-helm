@@ -892,13 +892,18 @@ connectInject:
   sidecarProxy:
     # Set default resources for sidecar proxy. If null, that resource won't
     # be set.
+    # These settings can be overridden on a per-pod basis via these annotations:
+    # - consul.hashicorp.com/sidecar-proxy-cpu-limit
+    # - consul.hashicorp.com/sidecar-proxy-cpu-request
+    # - consul.hashicorp.com/sidecar-proxy-memory-limit
+    # - consul.hashicorp.com/sidecar-proxy-memory-request
     resources:
-      limits:
+      requests:
         # Recommended default: 100Mi
         memory: null
         # Recommended default: 100m
         cpu: null
-      requests:
+      limits:
         # Recommended default: 100Mi
         memory: null
         # Recommended default: 100m
