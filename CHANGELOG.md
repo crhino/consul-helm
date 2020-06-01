@@ -1,5 +1,19 @@
 ## Unreleased
 
+FEATURES:
+
+* Resources are now set on all containers. This enables the chart to be deployed
+  in clusters that have resource quotas set. This also ensures that Consul
+  server and client pods won't be evicted by Kubernetes when nodes reach their
+  resource limits.
+  
+  Resource settings have been made configurable for sync catalog, connect inject
+  and client snapshot deployments.
+  
+  The defaults settings were chosen based on a cluster with a small workload.
+  For production, we recommend monitoring resource usage and modifying the
+  defaults according to your usage.
+
 BREAKING CHANGES:
 
 * Mesh Gateway: `meshGateway.enableHealthChecks` is no longer supported. This config
