@@ -38,7 +38,7 @@ spec:
   ports:
     - name: gateway
       port: {{ default $defaults.service.port $service.port }}
-      targetPort: 8443
+      targetPort: 443
       {{- if (default $defaults.service.nodePort $service.nodePort) }}
       nodePort: {{ default $defaults.service.nodePort $service.nodePort }}
       {{- end}}

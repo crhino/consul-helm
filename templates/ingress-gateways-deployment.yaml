@@ -309,6 +309,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           ports:
+            - name: ingress
+              containerPort: 443
             - name: gateway
               containerPort: 8443
               {{- if default $defaults.hostPort .hostPort }}
